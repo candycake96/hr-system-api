@@ -7,11 +7,13 @@ datasource db {
 }
 
 model Company {
-  id        String   @id @default(uuid()) @db.Uuid
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   code      String   @unique @db.VarChar(20)
   nameTh    String   @map("name_th") @db.VarChar(200)
   nameEn    String?  @map("name_en") @db.VarChar(200)
   taxId     String?  @map("tax_id") @db.VarChar(20)
+  website   String?  @db.VarChar(200)
+  logo      String?  @db.VarChar(200)
   phone     String?  @db.VarChar(30)
   email     String?  @db.VarChar(150)
   address   String?
@@ -22,8 +24,61 @@ model Company {
   @@map("company")
 }
 
+model branch {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId String   @map("company_id") @db.Uuid
+  code      String   @unique @db.VarChar(20)
+  nameTh    String   @map("name_th") @db.VarChar(200)
+  nameEn    String?  @map("name_en") @db.VarChar(200)
+  phone     String?  @db.VarChar(30)
+  email     String?  @db.VarChar(150)
+  address   String?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("branch")
+}
+
+model side {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code      String   @unique @db.VarChar(20)
+  nameTh    String   @map("name_th") @db.VarChar(200)
+  nameEn    String?  @map("name_en") @db.VarChar(200)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("side")
+}
+
+model department {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  branchId  String   @map("branch_id") @db.Uuid
+  code      String   @unique @db.VarChar(20)
+  nameTh    String   @map("name_th") @db.VarChar(200)
+  nameEn    String?  @map("name_en") @db.VarChar(200)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("department")
+}
+
+model position {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code      String   @unique @db.VarChar(20)
+  nameTh    String   @map("name_th") @db.VarChar(200)
+  nameEn    String?  @map("name_en") @db.VarChar(200)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("position")
+}
+
 model User {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   username  String   @unique @db.VarChar(50)
   password  String   @db.VarChar(255)
   email     String?  @unique @db.VarChar(150)
@@ -35,3 +90,5 @@ model User {
 
   @@map("user")
 }
+
+
