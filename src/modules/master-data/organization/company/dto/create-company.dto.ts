@@ -1,21 +1,27 @@
-import { IsString, IsNotEmpty, IsOptional, IsEmail, IsUrl } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 export class CreateCompanyDto {
-
   @IsString()
-  @IsOptional() 
+  @IsOptional()
   id?: string;
 
-    @IsString()
+  @IsString()
   @IsNotEmpty()
   code!: string;
-    
+
   @IsString()
   @IsNotEmpty()
   nameTh!: string;
 
   @IsString()
-  @IsOptional() 
+  @IsOptional()
   nameEn?: string;
 
   @IsString()
@@ -24,18 +30,25 @@ export class CreateCompanyDto {
 
   @IsString()
   @IsOptional()
-  address?: string;
+  logo?: string;
+
+  @IsString()
+  @IsOptional()
+  website?: string;
 
   @IsString()
   @IsOptional()
   phone?: string;
 
+  @IsString()
+  @IsOptional()
+  address?: string;
+
   @IsEmail()
   @IsOptional()
   email?: string;
 
-  @IsUrl()
+  @IsBoolean()
   @IsOptional()
-  website?: string;
-
+  isActive?: boolean;
 }

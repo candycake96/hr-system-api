@@ -1,26 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DatabaseService } from '@/database/database.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
 export class CompanyService {
-  create(createCompanyDto: CreateCompanyDto) {
-    return 'This action adds a new company';
+  constructor(private readonly database: DatabaseService) {}
+
+  async create(createCompanyDto: CreateCompanyDto) {
+    return this.database.company.create({
+      data: {
+        ...createCompanyDto,
+        isActive: createCompanyDto.isActive ?? true,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all company`;
+  async findAll() {
+    return this.database.company.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} company`;
+  async findOne(id: string) {
+    const company = await this.database.company.findUnique({
+      where: { id },
+    });
+
+    if (!company) {
+      throw new NotFoundException(`Company with id ${id} not found`);
+    }
+
+    return company;
   }
 
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
+  async update(id: string, updateCompanyDto: UpdateCompanyDto) {
+    await this.findOne(id);
+
+    return this.database.company.update({
+      where: { id },
+      data: updateCompanyDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} company`;
+  async remove(id: string) {
+    await this.findOne(id);
+
+    return this.database.company.delete({
+      where: { id },
+    });
   }
 }
