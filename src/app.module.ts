@@ -7,9 +7,10 @@ import { BranchModule } from './modules/master-data/organization/branch/branch.m
 import { SideModule } from './modules/master-data/organization/side/side.module';
 import { DepartmentModule } from './modules/master-data/organization/department/department.module';
 import { PositionModule } from './modules/master-data/organization/position/position.module';
+import { EmployeeGroupModule } from './modules/master-data/organization/employee-group/employee-group.module';
 
 @Module({
-  imports: [CompanyModule, DatabaseModule, BranchModule, SideModule, DepartmentModule, PositionModule],
+  imports: [CompanyModule, DatabaseModule, BranchModule, SideModule, DepartmentModule, PositionModule, EmployeeGroupModule],
   controllers: [AppController],
   providers: [AppService],
 })
