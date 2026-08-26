@@ -3,9 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CompanyModule } from './modules/master-data/organization/company/company.module';
 import { DatabaseModule } from './database/database.module';
+import { BranchModule } from './modules/master-data/organization/branch/branch.module';
+import { SideModule } from './modules/master-data/organization/side/side.module';
 
 @Module({
-  imports: [CompanyModule, DatabaseModule],
+  imports: [CompanyModule, DatabaseModule, BranchModule, SideModule],
   controllers: [AppController],
   providers: [AppService],
 })
