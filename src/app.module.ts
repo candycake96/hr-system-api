@@ -5,9 +5,10 @@ import { CompanyModule } from './modules/master-data/organization/company/compan
 import { DatabaseModule } from './database/database.module';
 import { BranchModule } from './modules/master-data/organization/branch/branch.module';
 import { SideModule } from './modules/master-data/organization/side/side.module';
+import { DepartmentModule } from './modules/master-data/organization/department/department.module';
 
 @Module({
-  imports: [CompanyModule, DatabaseModule, BranchModule, SideModule],
+  imports: [CompanyModule, DatabaseModule, BranchModule, SideModule, DepartmentModule],
   controllers: [AppController],
   providers: [AppService],
 })
