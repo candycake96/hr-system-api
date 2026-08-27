@@ -8,9 +8,10 @@ import { SideModule } from './modules/master-data/organization/side/side.module'
 import { DepartmentModule } from './modules/master-data/organization/department/department.module';
 import { PositionModule } from './modules/master-data/organization/position/position.module';
 import { EmployeeGroupModule } from './modules/master-data/organization/employee-group/employee-group.module';
+import { EmployeeModule } from './modules/master-data/employee/employee.module';
 
 @Module({
-  imports: [CompanyModule, DatabaseModule, BranchModule, SideModule, DepartmentModule, PositionModule, EmployeeGroupModule],
+  imports: [CompanyModule, DatabaseModule, BranchModule, SideModule, DepartmentModule, PositionModule, EmployeeGroupModule, EmployeeModule],
   controllers: [AppController],
   providers: [AppService],
 })
