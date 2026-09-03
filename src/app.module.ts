@@ -9,9 +9,20 @@ import { DepartmentModule } from './modules/master-data/organization/department/
 import { PositionModule } from './modules/master-data/organization/position/position.module';
 import { EmployeeGroupModule } from './modules/master-data/organization/employee-group/employee-group.module';
 import { EmployeeModule } from './modules/master-data/employee/employee.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
-  imports: [CompanyModule, DatabaseModule, BranchModule, SideModule, DepartmentModule, PositionModule, EmployeeGroupModule, EmployeeModule],
+  imports: [
+    CompanyModule,
+    DatabaseModule,
+    BranchModule,
+    SideModule,
+    DepartmentModule,
+    PositionModule,
+    EmployeeGroupModule,
+    EmployeeModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

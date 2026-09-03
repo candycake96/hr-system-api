@@ -96,3 +96,24 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+# HR System API
+
+## Authentication
+
+Set `DATABASE_URL` and a strong `JWT_SECRET` in `.env`, then use:
+
+- `POST /api/auth/register` to create a user. Passwords are hashed with bcrypt before they are saved.
+- `POST /api/auth/login` to receive an access token.
+
+Example request body for registration:
+
+```json
+{
+  "username": "admin",
+  "password": "change-me-123",
+  "email": "admin@example.com",
+  "firstName": "Admin",
+  "lastName": "User"
+}
+```
