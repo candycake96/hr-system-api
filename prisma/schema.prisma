@@ -25,11 +25,15 @@ model Company {
   sides            Side[]
   departments      Department[]
   positions        Position[]
-  companyAddresses CompanyAddress[]
-  employeeGroups   EmployeeGroup[]
-  jobTitles        JobTitle[]
-  documentFormats  DocumentFormat[]
-  documentRunnings DocumentRunning[]
+  companyAddresses   CompanyAddress[]
+  employeeGroups     EmployeeGroup[]
+  jobTitles          JobTitle[]
+  documentFormats    DocumentFormat[]
+  documentRunnings   DocumentRunning[]
+  salesChannelTypes  SalesChannelType[]
+  salesChannels      SalesChannel[]
+  salesTerritories   SalesTerritory[]
+  userCompanies      UserCompany[]
 
   @@map("company")
 }
@@ -58,22 +62,23 @@ model CompanyAddress {
 }
 
 model Branch {
-  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId   String       @map("company_id") @db.Uuid
-  code        String       @unique @db.VarChar(20)
-  nameTh      String       @map("name_th") @db.VarChar(200)
-  nameEn      String?      @map("name_en") @db.VarChar(200)
-  phone       String?      @db.VarChar(30)
-  email       String?      @db.VarChar(150)
-  address     String?
-  isActive    Boolean      @default(true) @map("is_active")
-  isDeleted   Boolean      @default(false) @map("is_deleted")
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
-  company     Company      @relation(fields: [companyId], references: [id])
-  employees   Employee[]
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId String     @map("company_id") @db.Uuid
+  code      String     @db.VarChar(20)
+  nameTh    String     @map("name_th") @db.VarChar(200)
+  nameEn    String?    @map("name_en") @db.VarChar(200)
+  phone     String?    @db.VarChar(30)
+  email     String?    @db.VarChar(150)
+  address   String?
+  isActive  Boolean    @default(true) @map("is_active")
+  isDeleted Boolean    @default(false) @map("is_deleted")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  company   Company    @relation(fields: [companyId], references: [id])
+  employees Employee[]
+  userBranchAccesses UserBranchAccess[]
 
-
+  @@unique([companyId, id])
   @@map("branch")
 }
 
@@ -126,50 +131,58 @@ model Position {
 }
 
 model User {
-  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username  String     @unique @db.VarChar(50)
-  password  String     @db.VarChar(255)
-  email     String?    @unique @db.VarChar(150)
-  firstName String?    @map("first_name") @db.VarChar(100)
-  lastName  String?    @map("last_name") @db.VarChar(100)
-  isActive  Boolean    @default(true) @map("is_active")
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
-  employees Employee[]
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username     String    @unique @db.VarChar(50)
+  passwordHash String    @map("password_hash") @db.VarChar(255)
+  email        String?   @unique @db.VarChar(150)
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
 
-  @@map("user")
+  employee      Employee?
+  userCompanies UserCompany[]
+
+  @@map("user_account")
 }
 
 model Employee {
-  id                String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId         String            @map("company_id") @db.Uuid
-  branchId          String            @map("branch_id") @db.Uuid
-  departmentId      String            @map("department_id") @db.Uuid
-  positionId        String            @map("position_id") @db.Uuid
-  sideId            String?           @map("side_id") @db.Uuid
-  employeeCode      String            @map("employee_code") @db.VarChar(20)
-  firstName         String            @map("first_name") @db.VarChar(100)
-  lastName          String            @map("last_name") @db.VarChar(100)
-  nickname          String?           @db.VarChar(50)
-  email             String?           @unique @db.VarChar(150)
-  phone             String?           @db.VarChar(30)
-  isActive          Boolean           @default(true) @map("is_active")
-  createdAt         DateTime          @default(now()) @map("created_at")
-  updatedAt         DateTime          @updatedAt @map("updated_at")
-  userId            String?           @map("user_id") @db.Uuid
-  company           Company           @relation(fields: [companyId], references: [id])
-  branch            Branch            @relation(fields: [branchId], references: [id])
-  department        Department        @relation(fields: [departmentId], references: [id])
-  position          Position          @relation(fields: [positionId], references: [id])
-  side              Side?             @relation(fields: [sideId], references: [id])
-  user              User?             @relation(fields: [userId], references: [id])
+  id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId      String  @map("company_id") @db.Uuid
+  branchId       String  @map("branch_id") @db.Uuid
+  departmentId   String  @map("department_id") @db.Uuid
+  positionId     String  @map("position_id") @db.Uuid
+  sideId         String? @map("side_id") @db.Uuid
+  employeeGroupId String? @map("employee_group_id") @db.Uuid
+  jobTitleId     String? @map("job_title_id") @db.Uuid
+
+  employeeCode   String  @map("employee_code") @db.VarChar(20)
+  firstName      String  @map("first_name") @db.VarChar(100)
+  lastName       String  @map("last_name") @db.VarChar(100)
+  nickname       String? @db.VarChar(50)
+  email          String? @db.VarChar(150)
+  phone          String? @db.VarChar(30)
+  isActive       Boolean @default(true) @map("is_active")
+
+  userId         String? @unique @map("user_id") @db.Uuid
+
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  company        Company       @relation(fields: [companyId], references: [id])
+  branch         Branch        @relation(fields: [branchId], references: [id])
+  department     Department    @relation(fields: [departmentId], references: [id])
+  position       Position      @relation(fields: [positionId], references: [id])
+  side           Side?         @relation(fields: [sideId], references: [id])
+  employeeGroup  EmployeeGroup? @relation(fields: [employeeGroupId], references: [id])
+  jobTitle       JobTitle?      @relation(fields: [jobTitleId], references: [id])
+  user           User?          @relation(fields: [userId], references: [id])
+
   employeeAddresses EmployeeAddress[]
-  employeeGroup     EmployeeGroup?    @relation(fields: [employeeGroupId], references: [id])
-  employeeGroupId   String?           @db.Uuid
-  jobTitle          JobTitle?         @relation(fields: [jobTitleId], references: [id])
-  jobTitleId        String?           @db.Uuid
 
   @@unique([companyId, employeeCode])
+  @@index([companyId])
+  @@index([branchId])
+  @@index([departmentId])
   @@map("employee")
 }
 
@@ -263,4 +276,125 @@ model DocumentRunning {
 
   company Company        @relation(fields: [companyId], references: [id])
   format  DocumentFormat @relation(fields: [companyId, moduleCode, documentTypeCode], references: [companyId, moduleCode, documentTypeCode])
+}
+
+model SalesChannelType {
+  id        String @id @default(uuid()) @db.Uuid
+  companyId String @map("company_id") @db.Uuid
+
+  code        String  @db.VarChar(30)
+  nameTh      String  @map("name_th") @db.VarChar(150)
+  nameEn      String? @map("name_en") @db.VarChar(150)
+  description String? @db.VarChar(500)
+
+  isActive  Boolean @default(true) @map("is_active")
+  sortOrder Int     @default(0) @map("sort_order")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company  Company       @relation(fields: [companyId], references: [id])
+  channels SalesChannel[]
+
+  @@unique([companyId, code])
+  @@index([companyId, isActive])
+  @@map("sales_channel_type")
+}
+
+model SalesChannel {
+  id                 String @id @default(uuid()) @db.Uuid
+  companyId          String @map("company_id") @db.Uuid
+  salesChannelTypeId String @map("sales_channel_type_id") @db.Uuid
+
+  code        String  @db.VarChar(30)
+  nameTh      String  @map("name_th") @db.VarChar(150)
+  nameEn      String? @map("name_en") @db.VarChar(150)
+  description String? @db.VarChar(500)
+
+  isActive  Boolean @default(true) @map("is_active")
+  sortOrder Int     @default(0) @map("sort_order")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company     Company          @relation(fields: [companyId], references: [id])
+  channelType SalesChannelType @relation(fields: [salesChannelTypeId], references: [id])
+
+  @@unique([companyId, code])
+  @@index([companyId, salesChannelTypeId])
+  @@index([companyId, isActive])
+  @@map("sales_channel")
+}
+
+model SalesTerritory {
+  id                String  @id @default(uuid()) @db.Uuid
+  companyId         String  @map("company_id") @db.Uuid
+  parentTerritoryId String? @map("parent_territory_id") @db.Uuid
+
+  code           String  @db.VarChar(30)
+  nameTh         String  @map("name_th") @db.VarChar(150)
+  nameEn         String? @map("name_en") @db.VarChar(150)
+  levelCode      String? @map("level_code") @db.VarChar(30)
+  hierarchyLevel Int     @default(1) @map("hierarchy_level")
+  description    String? @db.VarChar(500)
+  isActive       Boolean @default(true) @map("is_active")
+  sortOrder      Int     @default(0) @map("sort_order")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  parent   SalesTerritory?  @relation("SalesTerritoryHierarchy", fields: [parentTerritoryId], references: [id])
+  children SalesTerritory[] @relation("SalesTerritoryHierarchy")
+
+  @@unique([companyId, code])
+  @@index([companyId, parentTerritoryId])
+  @@index([companyId, hierarchyLevel])
+  @@map("sales_territory")
+}
+
+
+model UserCompany {
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String @map("user_id") @db.Uuid
+  companyId String @map("company_id") @db.Uuid
+
+  /// true = เข้าได้ทุกสาขา
+  /// false = เข้าได้เฉพาะ UserBranchAccess
+  allBranches Boolean @default(true) @map("all_branches")
+
+  isDefault Boolean @default(false) @map("is_default")
+  isActive  Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user          User              @relation(fields: [userId], references: [id])
+  company       Company           @relation(fields: [companyId], references: [id])
+  branchAccesses UserBranchAccess[]
+
+  @@unique([userId, companyId])
+  @@unique([id, companyId])
+  @@index([userId, isActive])
+  @@index([companyId, isActive])
+  @@map("user_company")
+}
+
+model UserBranchAccess {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  userCompanyId String @map("user_company_id") @db.Uuid
+  companyId     String @map("company_id") @db.Uuid
+  branchId      String @map("branch_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  userCompany UserCompany @relation(fields: [userCompanyId, companyId], references: [id, companyId], onDelete: Cascade)
+  branch      Branch      @relation(fields: [companyId, branchId], references: [companyId, id], onDelete: Restrict)
+
+  @@unique([userCompanyId, branchId])
+  @@index([companyId, branchId])
+  @@index([userCompanyId])
+  @@map("user_branch_access")
 }

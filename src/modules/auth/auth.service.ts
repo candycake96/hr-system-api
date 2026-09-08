@@ -26,12 +26,10 @@ export class AuthService {
       const user = await this.database.user.create({
         data: {
           username: dto.username,
-          password,
+          passwordHash: password,
           email: dto.email,
-          firstName: dto.firstName,
-          lastName: dto.lastName,
         },
-        omit: { password: true },
+        omit: { passwordHash: true },
       });
 
       return {
@@ -59,13 +57,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid username or password');
     }
 
-    const passwordMatches = await bcrypt.compare(dto.password, user.password);
+    const passwordMatches = await bcrypt.compare(dto.password, user.passwordHash);
 
     if (!passwordMatches) {
       throw new UnauthorizedException('Invalid username or password');
     }
 
-    const { password: _password, ...safeUser } = user;
+    const { passwordHash: _passwordHash, ...safeUser } = user;
 
     return {
       user: safeUser,
